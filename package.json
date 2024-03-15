@@ -1,0 +1,13 @@
+{
+  "name": "mineru",
+  "scripts": {
+    "format": "prettier --config ./config/.prettierrc.json \"./src/**/*.{ts,mjs}\" --write"
+  },
+  "workspaces": [
+    "packages/**"
+  ],
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.2"
+  }
+}
