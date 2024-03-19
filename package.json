@@ -1,7 +1,7 @@
 {
   "name": "mieru",
   "scripts": {
-    "format": "prettier --config ./config/.prettierrc.json \"./src/**/*.{ts,mjs}\" --write",
+    "format": "prettier --config .prettierrc.json \"./src/**/*.{ts,mjs}\" --write",
     "dev:cli": "ts-node ./src/cli/index.ts"
   },
   "devDependencies": {
