@@ -60,3 +60,50 @@ export class DirectoryTree extends LLMTool<typeof dirTreeSchema> {
         }
     }
 }
+
+const createFileSchema = z.object({
+    path: z.string().describe('The path to the file to be created.'),
+    content: z.string().describe('The content to write to the file.'),
+})
+
+@LLMFunction('CreateFile', {
+    description: 'Create a file with the given content.',
+    schema: createFileSchema
+})
+export class CreateFile extends LLMTool<typeof createFileSchema> {
+    public basePath: string = os.homedir()
+
+    public async _call(params: z.infer<typeof createFileSchema>) {
+        const { path: givenPath, content } = params
+
+        if (!fs.existsSync(this.basePath)) {
+            return 'Base path does not exist'
+        }
+
+        const pathParts = givenPath.split(path.sep)
+        let effectivePath: string
+
+        if (pathParts.includes('.')) {
+            const remaining_path = pathParts.slice(rindex(pathParts, '.') + 1)
+            effectivePath = path.join(this.basePath, ...remaining_path)
+        } else {
+            effectivePath = path.relative(this.basePath, givenPath)
+        }
+
+        if (givenPath.includes('~')) return 'Path cannot contain ~'
+
+        if (!path.relative(this.basePath, effectivePath).startsWith('..')) return 'Path is not within the base path'
+
+        try {
+            fs.writeFileSync(effectivePath, content)
+            return 'File created'
+        } catch (e) {
+            return JSON.stringify(e)
+        }
+    }
+}
+
+const readFileSchema = z.object({
+    path: z.string().describe('The path to the file to be read.')
+})
+

@@ -1,5 +1,6 @@
 import { StructuredTool } from 'langchain/tools'
 import { z } from 'zod'
+import { convertToOpenAIFunction } from "@langchain/core/utils/function_calling";
 
 export type LLMToolOptions<T> = {
     name: string
@@ -25,5 +26,10 @@ export class LLMTool<T extends z.ZodObject<any, any, any, any>> extends Structur
 
     public async _call(_params: z.infer<(typeof this)['schema']>): Promise<string> {
         throw new Error('Method not implemented.')
+    }
+
+    public static asOpenAIFunction<T extends z.ZodObject<any, any, any, any>>() {
+        const tool = this as unknown as LLMTool<T>
+        return convertToOpenAIFunction(tool)
     }
 }
