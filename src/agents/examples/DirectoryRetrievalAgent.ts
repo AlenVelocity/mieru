@@ -3,7 +3,6 @@ import { DirectoryTree } from '../../functions/Functions/FSOPS'
 import { GPT_3_5_TURBO } from '../../llms/OpenAI'
 import { stripIndents } from 'common-tags'
 
-
 const llm = GPT_3_5_TURBO.bind({
     functions: [DirectoryTree.asOpenAIFunction()]
 })

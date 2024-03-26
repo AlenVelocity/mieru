@@ -1,6 +1,6 @@
 import { StructuredTool } from 'langchain/tools'
 import { z } from 'zod'
-import { convertToOpenAIFunction } from "@langchain/core/utils/function_calling";
+import { convertToOpenAIFunction } from '@langchain/core/utils/function_calling'
 
 export type LLMToolOptions<T> = {
     name: string

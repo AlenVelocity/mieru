@@ -1,11 +1,9 @@
 // WORK IN PROGRESS
 // DO NOT MODIFY THIS FILE
 
-import { Browser, CDPSession, Page } from "playwright";
-
+import { Browser, CDPSession, Page } from 'playwright'
 
 class Crawler {
-
     private _page?: Page
     private client?: CDPSession
     private elements = new Map<number, any>()
@@ -21,8 +19,7 @@ class Crawler {
         this._page = page
     }
 
-    constructor(private browser: Browser) {
-    }
+    constructor(private browser: Browser) {}
 
     public init = async () => {
         this.page = await this.browser.newPage()
@@ -46,9 +43,9 @@ class Crawler {
             throw new Error('Page is not initialized')
         }
         this.page.evaluate(() => {
-            const links = document.getElementsByTagName("a");
+            const links = document.getElementsByTagName('a')
             for (let i = 0; i < links.length; i++) {
-                links[i].removeAttribute("target");
+                links[i].removeAttribute('target')
             }
         })
         const element = this.elements.get(id)
@@ -79,23 +76,22 @@ class Crawler {
             winHeight,
             documentOffsetHeight,
             documentScrollHeight
-          } = await this.page.evaluate(() => {
+        } = await this.page.evaluate(() => {
             return {
-              devicePixelRatio: window.devicePixelRatio,
-              winScrollX: window.scrollX,
-              winScrollY: window.scrollY,
-              winUpperBound: window.pageYOffset,
-              winLeftBound: window.pageXOffset,
-              winWidth: window.screen.width,
-              winHeight: window.screen.height,
-              documentOffsetHeight: document.body.offsetHeight,
-              documentScrollHeight: document.body.scrollHeight
-            };
-          });
-          
-          const winRightBound = winLeftBound + winWidth;
-          const winLowerBound = winUpperBound + winHeight;
-          
+                devicePixelRatio: window.devicePixelRatio,
+                winScrollX: window.scrollX,
+                winScrollY: window.scrollY,
+                winUpperBound: window.pageYOffset,
+                winLeftBound: window.pageXOffset,
+                winWidth: window.screen.width,
+                winHeight: window.screen.height,
+                documentOffsetHeight: document.body.offsetHeight,
+                documentScrollHeight: document.body.scrollHeight
+            }
+        })
+
+        const winRightBound = winLeftBound + winWidth
+        const winLowerBound = winUpperBound + winHeight
 
         const percentageProgressStart = (winUpperBound / documentScrollHeight) * 100
         const percentageProgressEnd = ((winHeight + winUpperBound) / documentScrollHeight) * 100
@@ -108,7 +104,6 @@ class Crawler {
             }
         ]
 
-       
         const tree = await this.client?.send('DOMSnapshot.captureSnapshot', {
             computedStyles: [],
             includeDOMRects: true,
@@ -180,26 +175,25 @@ class Crawler {
         const childNodes = {}
         const elementsInViewPort = []
 
-        const anchorAncestry = { "-1": [false, null] }
-        const buttonAncestry = { "-1": [false, null] }
+        const anchorAncestry = { '-1': [false, null] }
+        const buttonAncestry = { '-1': [false, null] }
 
         const convertName = (nodeName: string, hasClickHandler: boolean) => {
-            if (nodeName === "a") {
-                return "link"
+            if (nodeName === 'a') {
+                return 'link'
             }
-            if (nodeName === "input") {
-                return "input"
+            if (nodeName === 'input') {
+                return 'input'
             }
-            if (nodeName === "img") {
-                return "img"
+            if (nodeName === 'img') {
+                return 'img'
             }
-            if (nodeName === "button" || hasClickHandler) {
-                return "button"
+            if (nodeName === 'button' || hasClickHandler) {
+                return 'button'
             } else {
-                return "text"
+                return 'text'
             }
         }
-
 
         const findAttributes = (attributes: number[], keys: string[]) => {
             const values: { [key: string]: string } = {}
@@ -442,7 +436,13 @@ class Crawler {
 
 		print("Parsing time: {:0.2f} seconds".format(time.time() - start))
 		return elements_of_interest */
-        const addToHashTree = (hashTree: { [key: string]: [boolean, number | null] }, tag: string, nodeId: number, nodeName: string, parentId: number) => {
+        const addToHashTree = (
+            hashTree: { [key: string]: [boolean, number | null] },
+            tag: string,
+            nodeId: number,
+            nodeName: string,
+            parentId: number
+        ) => {
             const parentIdStr = parentId.toString()
             if (!hashTree[parentIdStr]) {
                 const parentName = strings![nodeName![parentIdStr]].toLowerCase()
@@ -496,7 +496,13 @@ class Crawler {
             const nodeName = strings![nodeNames![nodeIndex]].toLowerCase()
 
             const [isAncestorOfAnchor, anchorId] = addToHashTree(anchorAncestry, 'a', nodeIndex, nodeName, nodeParent)
-            const [isAncestorOfButton, buttonId] = addToHashTree(buttonAncestry, 'button', nodeIndex, nodeName, nodeParent)
+            const [isAncestorOfButton, buttonId] = addToHashTree(
+                buttonAncestry,
+                'button',
+                nodeIndex,
+                nodeName,
+                nodeParent
+            )
 
             try {
                 cursor = layoutNodeIndex!.indexOf(nodeIndex)
@@ -514,7 +520,11 @@ class Crawler {
             const elemRightBound = (x + width) / devicePixelRatio
             const elemLowerBound = (y + height) / devicePixelRatio
 
-            const partiallyIsInViewPort = elemLeftBound < winRightBound && elemRightBound >= winLeftBound && elemTopBound < winLowerBound && elemLowerBound >= winUpperBound
+            const partiallyIsInViewPort =
+                elemLeftBound < winRightBound &&
+                elemRightBound >= winLeftBound &&
+                elemTopBound < winLowerBound &&
+                elemLowerBound >= winUpperBound
 
             if (!partiallyIsInViewPort) {
                 return
@@ -522,7 +532,13 @@ class Crawler {
 
             const metaData = []
 
-            const elementAttributes = findElementAttributes(attributes![nodeIndex], ['type', 'placeholder', 'aria-label', 'title', 'alt'])
+            const elementAttributes = findElementAttributes(attributes![nodeIndex], [
+                'type',
+                'placeholder',
+                'aria-label',
+                'title',
+                'alt'
+            ])
 
             const ancestorException = isAncestorOfAnchor || isAncestorOfButton
             const ancestorNodeKey = ancestorException ? (isAncestorOfAnchor ? anchorId : buttonId) : null
@@ -556,10 +572,9 @@ class Crawler {
                 isClickable: isClickable!.includes(nodeIndex),
                 originX: x,
                 originY: y,
-                centerX: x + (width / 2),
-                centerY: y + (height / 2)
+                centerX: x + width / 2,
+                centerY: y + height / 2
             })
         }
     }
-        
 }

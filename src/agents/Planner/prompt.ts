@@ -1,5 +1,5 @@
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { stripIndents } from "common-tags";
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
+import { stripIndents } from 'common-tags'
 
 const template = stripIndents`
         You are a software developer. Your duty is to plan a project based on the user input.
@@ -14,10 +14,7 @@ const template = stripIndents`
     `
 
 export const prompt = ChatPromptTemplate.fromMessages([
-    [
-      "system",
-      template,
-    ],
-    ["user", "{input}"],
-    new MessagesPlaceholder("agent_scratchpad"),
-  ]);
+    ['system', template],
+    ['user', '{input}'],
+    new MessagesPlaceholder('agent_scratchpad')
+])

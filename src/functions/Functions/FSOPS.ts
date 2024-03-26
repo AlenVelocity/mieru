@@ -63,7 +63,7 @@ export class DirectoryTree extends LLMTool<typeof dirTreeSchema> {
 
 const createFileSchema = z.object({
     path: z.string().describe('The path to the file to be created.'),
-    content: z.string().describe('The content to write to the file.'),
+    content: z.string().describe('The content to write to the file.')
 })
 
 @LLMFunction('CreateFile', {
@@ -106,4 +106,3 @@ export class CreateFile extends LLMTool<typeof createFileSchema> {
 const readFileSchema = z.object({
     path: z.string().describe('The path to the file to be read.')
 })
-
