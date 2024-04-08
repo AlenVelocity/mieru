@@ -1,3 +1,4 @@
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { stripIndents } from "common-tags";
 import { z } from "zod";
 
@@ -27,3 +28,9 @@ const template = stripIndents`
     Step by step guide:
     {steps}
 `
+
+export const prompt = ChatPromptTemplate.fromMessages([
+    ['system', template],
+    ['user', '{input}'],
+    new MessagesPlaceholder('agent_scratchpad')
+])
